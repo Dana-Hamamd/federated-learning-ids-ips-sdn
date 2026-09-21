@@ -8,6 +8,7 @@
 ![Mininet](https://img.shields.io/badge/Mininet-231F20?style=flat-square)
 ![Ryu](https://img.shields.io/badge/Ryu%20Controller-231F20?style=flat-square)
 ![SDN](https://img.shields.io/badge/SDN-0B5394?style=flat-square)
+![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 A distributed **Intrusion Detection and Prevention System (IDS/IPS)** that combines **federated learning** with **Software Defined Networking (SDN)** to detect and respond to network attacks across an IoT test bed in real time — without centralising raw traffic.
 
@@ -20,17 +21,18 @@ A distributed **Intrusion Detection and Prevention System (IDS/IPS)** that combi
 
 ## Architecture
 
+```mermaid
+flowchart TD
+    H["IoT / host nodes"] --> SW["OpenFlow switches (Mininet)"]
+    SW -->|"flow features"| C["Ryu SDN controller"]
+    C -->|"traffic features"| ML["Federated ML models<br/>TensorFlow / Keras"]
+    ML -->|"local model updates"| AGG["Federated aggregation"]
+    AGG -->|"global model"| ML
+    ML -->|"detection result"| C
+    C -->|"install / update flow rules"| SW
 ```
-IoT / host nodes  →  Mininet emulated topology  →  Ryu SDN controller
-                                                        │
-                                   flow features  ──────┤
-                                                        ▼
-                              Federated ML models (TensorFlow / Keras)
-                                                        │
-                              detection result  ────────┤
-                                                        ▼
-                              controller installs / updates flow rules  (prevention)
-```
+
+The controller collects flow features from the emulated data plane, the federated models classify traffic, and detections are pushed back to the controller, which installs or updates OpenFlow rules to prevent malicious flows.
 
 ## Tech Stack
 
@@ -40,9 +42,23 @@ IoT / host nodes  →  Mininet emulated topology  →  Ryu SDN controller
 | Machine Learning | Python, TensorFlow, Keras, Federated Learning |
 | Evaluation | Attack scenarios, detection-accuracy & scalability analysis |
 
+## Repository Layout (planned)
+
+```text
+controller/     Ryu application: feature collection + rule installation
+models/         federated-learning training and aggregation
+topology/       Mininet IoT test-bed definitions
+evaluation/     attack scenarios, metrics, and results
+docs/           report and architecture notes
+```
+
 ## Status
 
 This repository documents the project. The implementation code, evaluation results, and the final report will be added here.
+
+## License
+
+Released under the [MIT License](LICENSE).
 
 ## Author
 
